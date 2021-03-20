@@ -79,15 +79,15 @@ public class Mpu9250 {
      * @param iteration    Times of Iteration (1~5)
      * @return bias of sensor
      */
-    public byte[] calibrate(byte startAddress, int iteration){
+    public short[] calibrate(byte startAddress, int iteration){
         float kP = 0;
         float kI = 0;
         float rate = (float)((100 - (20 - (iteration / 5.0 * 20))) / 100);
         short[] offset = new short[]{0, 0, 0};
         int[] errorSum = new int[]{0, 0, 0};
         if(startAddress == Registers.GYRO_XOUT_H.getAddress()){
-            kP = 0.3f;
-            kI = 90;
+            kP = 0.6f;
+            kI = 0.03f;
         }else if(startAddress == Registers.ACCEL_XOUT_H.getAddress()){
             kP = 0.3f;
             kI = 0.02f;
@@ -96,23 +96,23 @@ public class Mpu9250 {
         kI *= rate;
         //run PID
         for(int i = 0; i < iteration; ++i){
-            for(int j = 0; j < 100; ++j){
+            for(int j = 0; j < 250; ++j){
                 short[] err = read16Bit(startAddress, 3);
                 for(int k = 0; k < 3; ++k){
                     err[k] -= offset[k];
                     errorSum[k] += err[k];
                     offset[k] = (short) Math.round(err[k] * kP + errorSum[k] * kI);
                 }
-                if(j % 3 == 0){
+                if(j % 5 == 0){
                     for(int k = 0; k < 3; ++k){
                         errorSum[k] = 0;
                     }
                 }
             }
-            kP *= 0.75;
-            kI *= 0.75;
+            kP *= 0.85;
+            kI *= 0.85;
         }
-        return new byte[]{0, 0, 0};
+        return offset;
     }
 
     /**
