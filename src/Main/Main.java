@@ -12,8 +12,11 @@ public class Main {
 
     public static void main(String[] args) {
         Mpu9250 ahrs = new Mpu9250();
-        byte[] offset = ahrs.calibrate((byte) Mpu9250.Registers.GYRO_XOUT_H.getAddress(), 5);
-        System.out.println("offset" + Arrays.toString(offset));
-        System.out.println("value" + Arrays.toString(ahrs.read16Bit((byte) Mpu9250.Registers.GYRO_XOUT_H.getAddress(), 3)));
+        for(int i = 0; i < 3; i++){
+            short[] offset = ahrs.calibrate((byte) Mpu9250.Registers.GYRO_XOUT_H.getAddress(), 5);
+            System.out.println("offset" + Arrays.toString(offset));
+            System.out.println("value" + Arrays.toString(ahrs.read16Bit((byte) Mpu9250.Registers.GYRO_XOUT_H.getAddress(), 3)));
+        }
+
     }
 }
