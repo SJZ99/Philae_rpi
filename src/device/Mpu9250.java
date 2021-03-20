@@ -87,7 +87,7 @@ public class Mpu9250 {
         int[] errorSum = new int[]{0, 0, 0};
         if(startAddress == Registers.GYRO_XOUT_H.getAddress()){
             kP = 0.6f;
-            kI = 0.03f;
+            kI = 0.02f;
         }else if(startAddress == Registers.ACCEL_XOUT_H.getAddress()){
             kP = 0.3f;
             kI = 0.02f;
@@ -101,7 +101,7 @@ public class Mpu9250 {
                 for(int k = 0; k < 3; ++k){
                     err[k] -= offset[k];
                     errorSum[k] += err[k];
-                    offset[k] = (short) Math.round(err[k] * kP + errorSum[k] * kI);
+                    offset[k] += (short) Math.round(err[k] * kP + errorSum[k] * kI);
                 }
                 if(j % 5 == 0){
                     for(int k = 0; k < 3; ++k){
