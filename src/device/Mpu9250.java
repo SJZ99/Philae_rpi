@@ -5,23 +5,28 @@ import com.pi4j.io.i2c.I2CDevice;
 import com.pi4j.io.i2c.I2CFactory;
 
 import device.Scale.*;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.util.Objects;
 
-public class Mpu9250 {
+public class Mpu9250 implements NineDOF{
     private static final byte[] MPU9250_ADDRESS = {
             (byte)0x68,
             (byte)0x69
     };
     private I2CDevice mpu9250 = null;
     private Scale scale;
+
     public Mpu9250() {
         this(false);
     }
+
     public Mpu9250(boolean isAD0High) {
-        this(new Scale(AccScale.AFS_4G, GyroScale.GFS_250DPS, MagScale.MFS_16BIT),
+        this(new Scale(Scale.AccScale.AFS_4G, Scale.GyroScale.GFS_250DPS, Scale.MagScale.MFS_16BIT),
                 isAD0High);
     }
+
     public Mpu9250(Scale scale, boolean isAD0High) {
         try{
             I2CBus i2c = I2CFactory.getInstance(1);
@@ -44,33 +49,62 @@ public class Mpu9250 {
      * Init Gyroscope and Accelerometer.
      */
     public void init(){
-        byte temp = read(Registers.PWR_MGMT_1.getAddress());
+        byte temp = read(Mpu9250.Registers.PWR_MGMT_1.getAddress());
 
         temp = (byte)(temp & 0x06);  //clear [6](sleep mode), set [1](auto select clock source)
-        write(Registers.PWR_MGMT_1.getAddress(), temp);
+        write(Mpu9250.Registers.PWR_MGMT_1.getAddress(), temp);
         sleep(150);
 
         temp = (byte)(temp | 0x01);
-        write(Registers.PWR_MGMT_1.getAddress(), temp);
+        write(Mpu9250.Registers.PWR_MGMT_1.getAddress(), temp);
         sleep(200);
 
-        write(Registers.CONFIG.getAddress(), (byte)0x03); //Gyroscope 41kHz, Temperature 42kHz
+        write(Mpu9250.Registers.CONFIG.getAddress(), (byte)0x03); //Gyroscope 41kHz, Temperature 42kHz
 
-        write(Registers.SMPLRT_DIV.getAddress(), (byte)0x04); //Gyroscope 41k * 1 / (1 + SMPLRT_DIV) = 8k(Hz)
+        write(Mpu9250.Registers.SMPLRT_DIV.getAddress(), (byte)0x04); //Gyroscope 41k * 1 / (1 + SMPLRT_DIV) = 8k(Hz)
 
         temp = (byte)0;
-        write(Registers.GYRO_CONFIG.getAddress(), (byte)(temp | scale.getGyro().getValue())); //Gyroscope default 250 (deg / sec)
+        write(Mpu9250.Registers.GYRO_CONFIG.getAddress(), (byte)(temp | scale.getGyro().getValue())); //Gyroscope default 250 (deg / sec)
 
-        write(Registers.ACCEL_CONFIG.getAddress(), (byte)(temp | scale.getAcc().getValue())); //Accelerometer default 4g
+        write(Mpu9250.Registers.ACCEL_CONFIG.getAddress(), (byte)(temp | scale.getAcc().getValue())); //Accelerometer default 4g
 
-        temp = read(Registers.ACCEL_CONFIG.address);
+        temp = read(Mpu9250.Registers.ACCEL_CONFIG.address);
         temp = (byte)(temp & ~0x0F);
         temp = (byte)(temp | 0x03);
-        write(Registers.ACCEL_CONFIG2.getAddress(), temp);
+        write(Mpu9250.Registers.ACCEL_CONFIG2.getAddress(), temp);
 
-        write(Registers.INT_PIN_CFG.getAddress(), (byte)0x22);  // INT is 50 microsecond pulse and any read to clear - as per MPUBASICAHRS_T3
-        write(Registers.INT_ENABLE.getAddress(), (byte)0x01);  // Enable data ready (bit 0) interrupt
+        write(Mpu9250.Registers.INT_PIN_CFG.getAddress(), (byte)0x22);  // INT is 50 microsecond pulse and any read to clear - as per MPUBASICAHRS_T3
+        write(Mpu9250.Registers.INT_ENABLE.getAddress(), (byte)0x01);  // Enable data ready (bit 0) interrupt
         sleep(100);
+
+        writeOffset((byte) Mpu9250.Registers.XG_OFFSET_H.getAddress(), calibrate((byte) Mpu9250.Registers.GYRO_XOUT_H.getAddress(), 4));
+    }
+
+    /**
+     * Getter for gyro x value (velocity)
+     * @return Angular velocity of x axis
+     */
+    @Override
+    public double getGyro_x(){
+        return read16Bit(Registers.GYRO_XOUT_H.getAddress(), 1)[0] * scale.getGyro().getResolution();
+    }
+
+    /**
+     * Getter for gyro y value (velocity)
+     * @return Angular velocity of y axis
+     */
+    @Override
+    public double getGyro_y(){
+        return read16Bit(Registers.GYRO_YOUT_H.getAddress(), 1)[0] * scale.getGyro().getResolution();
+    }
+
+    /**
+     * Getter for gyro z value (velocity)
+     * @return Angular velocity of z axis
+     */
+    @Override
+    public double getGyro_z(){
+        return read16Bit(Registers.GYRO_ZOUT_H.getAddress(), 1)[0] * scale.getGyro().getResolution();
     }
 
     /**
@@ -85,10 +119,10 @@ public class Mpu9250 {
         float rate = (float)((100 - (20 - (iteration / 5.0 * 20))) / 100);
         short[] offset = new short[]{0, 0, 0};
         int[] errorSum = new int[]{0, 0, 0};
-        if(startAddress == Registers.GYRO_XOUT_H.getAddress()){
+        if(startAddress == Mpu9250.Registers.GYRO_XOUT_H.getAddress()){
             kP = 0.6f;
             kI = 0.02f;
-        }else if(startAddress == Registers.ACCEL_XOUT_H.getAddress()){
+        }else if(startAddress == Mpu9250.Registers.ACCEL_XOUT_H.getAddress()){
             kP = 0.3f;
             kI = 0.02f;
         }
@@ -116,16 +150,25 @@ public class Mpu9250 {
     }
 
     /**
-     * Sleep specified length of time.
-     * @param mills mills that will sleep
+     * Write offset to hardware register.
+     * @param address First register address
+     * @param offset  Offset array, should contain three value(x, y, z)
      */
-    private void sleep(long mills){
-        try{
-            Thread.sleep(mills);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+    public void writeOffset(byte address, short[] offset){
+        byte[] buffer = new byte[6];
+        if(address == Mpu9250.Registers.XG_OFFSET_H.getAddress()){
+            //Divide 4 to match the registers of offset expect.
+            buffer[0] = (byte)(-offset[0] / 4 >> 8);
+            buffer[1] = (byte)(-offset[1] / 4);
+            buffer[2] = (byte)(-offset[2] / 4 >> 8);
+            buffer[3] = (byte)(-offset[3] / 4);
+            buffer[4] = (byte)(-offset[4] / 4 >> 8);
+            buffer[5] = (byte)(-offset[5] / 4);
+
+            write(Mpu9250.Registers.XG_OFFSET_H.getAddress(), 6, buffer);
         }
     }
+
     /**
      * Write byte(8 bit) to mpu9250's register
      * @param address Register address
@@ -138,6 +181,28 @@ public class Mpu9250 {
             e.printStackTrace();
         }
     }
+
+    /**
+     * Write multiple value to consequent registers.
+     * @param address        First address
+     * @param registerCount  How many register want to write
+     * @param data           Data that will be wrote to register
+     */
+    public void write(int address, int registerCount, byte[] data){
+        Objects.requireNonNull(data);
+        if(data.length != registerCount){
+            System.err.println("Couldn't match! Mpu9250 write multiple register");
+            return;
+        }
+        for(int i = 0; i < registerCount; ++i){
+            try {
+                mpu9250.write((address + i), data[i]);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     /**
      * Read a data(8 bit)
      * @param  address Register address
@@ -173,7 +238,13 @@ public class Mpu9250 {
         return group;
     }
 
-
+    /**
+     * Get gyro sample rate
+     * @return 8000 (Hz)
+     */
+    public int getGyroSampleRate(){
+        return 8000;
+    }
 
 
 

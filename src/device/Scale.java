@@ -47,7 +47,7 @@ public class Scale {
         {
             return value;
         }
-        public float getRes()
+        public float getResolution()
         {
             return res;
         }
@@ -75,7 +75,7 @@ public class Scale {
         {
             return (byte)value;
         }
-        public double getRes()
+        public double getResolution()
         {
             return (double)minMax/32768.0;
         }
@@ -104,7 +104,7 @@ public class Scale {
         {
             return (byte)value;
         }
-        public double getRes()
+        public double getResolution()
         {
             return (double)minMax/32768.0;
         }
