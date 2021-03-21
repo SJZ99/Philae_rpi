@@ -49,7 +49,7 @@ public class AHRS {
                 pitch += sensor.getGyro_x() * deltaT;
                 roll  += sensor.getGyro_y() * deltaT;
                 yaw   += sensor.getGyro_z() * deltaT;
-                sensor.sleep(150);
+                sensor.sleep(125);
             }
         }
     }

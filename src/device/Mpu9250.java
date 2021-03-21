@@ -5,9 +5,10 @@ import com.pi4j.io.i2c.I2CDevice;
 import com.pi4j.io.i2c.I2CFactory;
 
 import device.Scale.*;
-import org.jetbrains.annotations.NotNull;
+
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Objects;
 
 public class Mpu9250 implements NineDOF{
@@ -59,6 +60,8 @@ public class Mpu9250 implements NineDOF{
         write(Mpu9250.Registers.PWR_MGMT_1.getAddress(), temp);
         sleep(200);
 
+        writeOffset((byte) Mpu9250.Registers.XG_OFFSET_H.getAddress(), new short[]{0, 0, 0});
+
         write(Mpu9250.Registers.CONFIG.getAddress(), (byte)0x03); //Gyroscope 41kHz, Temperature 42kHz
 
         write(Mpu9250.Registers.SMPLRT_DIV.getAddress(), (byte)0x04); //Gyroscope 41k * 1 / (1 + SMPLRT_DIV) = 8k(Hz)
@@ -76,8 +79,10 @@ public class Mpu9250 implements NineDOF{
         write(Mpu9250.Registers.INT_PIN_CFG.getAddress(), (byte)0x22);  // INT is 50 microsecond pulse and any read to clear - as per MPUBASICAHRS_T3
         write(Mpu9250.Registers.INT_ENABLE.getAddress(), (byte)0x01);  // Enable data ready (bit 0) interrupt
         sleep(100);
+        short[] offset = calibrate((byte) Mpu9250.Registers.GYRO_XOUT_H.getAddress(), 4);
+        System.out.println(Arrays.toString(offset));
+        writeOffset((byte) Mpu9250.Registers.XG_OFFSET_H.getAddress(), offset);
 
-        writeOffset((byte) Mpu9250.Registers.XG_OFFSET_H.getAddress(), calibrate((byte) Mpu9250.Registers.GYRO_XOUT_H.getAddress(), 4));
     }
 
     /**
@@ -130,7 +135,7 @@ public class Mpu9250 implements NineDOF{
         kI *= rate;
         //run PID
         for(int i = 0; i < iteration; ++i){
-            for(int j = 0; j < 250; ++j){
+            for(int j = 0; j < 100; ++j){
                 short[] err = read16Bit(startAddress, 3);
                 for(int k = 0; k < 3; ++k){
                     err[k] -= offset[k];
@@ -158,12 +163,12 @@ public class Mpu9250 implements NineDOF{
         byte[] buffer = new byte[6];
         if(address == Mpu9250.Registers.XG_OFFSET_H.getAddress()){
             //Divide 4 to match the registers of offset expect.
-            buffer[0] = (byte)(-offset[0] / 4 >> 8);
-            buffer[1] = (byte)(-offset[1] / 4);
-            buffer[2] = (byte)(-offset[2] / 4 >> 8);
-            buffer[3] = (byte)(-offset[3] / 4);
-            buffer[4] = (byte)(-offset[4] / 4 >> 8);
-            buffer[5] = (byte)(-offset[5] / 4);
+            buffer[0] = (byte)((-offset[0] / 4 >> 8) & 0xFF);
+            buffer[1] = (byte)((-offset[0] / 4) & 0xFF);
+            buffer[2] = (byte)((-offset[1] / 4 >> 8) & 0xFF);
+            buffer[3] = (byte)((-offset[1] / 4) & 0xFF);
+            buffer[4] = (byte)((-offset[2] / 4 >> 8) & 0xFF);
+            buffer[5] = (byte)((-offset[2] / 4) & 0xFF);
 
             write(Mpu9250.Registers.XG_OFFSET_H.getAddress(), 6, buffer);
         }

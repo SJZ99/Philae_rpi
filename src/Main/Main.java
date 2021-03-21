@@ -14,8 +14,10 @@ public class Main {
     public static void main(String[] args) {
         Mpu9250 mpu9250 = new Mpu9250();
         AHRS ahrs = new AHRS(mpu9250);
+        mpu9250.sleep(200);
+        System.out.println(Arrays.toString(mpu9250.read16Bit((byte)Mpu9250.Registers.GYRO_XOUT_H.getAddress(), 3)));
         while(true){
-            System.out.printf("yaw = %f, roll = %f, pitch = %f", ahrs.getRawYaw(), ahrs.getRawRoll(), ahrs.getRawPitch());
+            System.out.printf("yaw= %f, roll= %f, pitch= %f\n", ahrs.getRawYaw(), ahrs.getRawRoll(), ahrs.getRawPitch());
         }
 
     }
