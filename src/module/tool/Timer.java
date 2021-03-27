@@ -17,6 +17,12 @@ public class Timer {
         return pass;
     }
 
+    public void spinLock(long nano){
+        start();
+        while(getPass() < nano);
+        return;
+    }
+
     public double getResolution(){
         return (1d / 1000000000d);
     }

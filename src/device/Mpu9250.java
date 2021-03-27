@@ -16,8 +16,16 @@ public class Mpu9250 implements NineDOF{
             (byte)0x68,
             (byte)0x69
     };
+    /** Sensor reference */
     private I2CDevice mpu9250 = null;
+    /** scale */
     private Scale scale;
+    /** Gyro data */
+    private short[] gyro = new short[3];
+    /** Accel data */
+    private short[] accel = new short[3];
+    /** Mag data */
+    private short[] mag = new short[3];
 
     public Mpu9250() {
         this(false);
@@ -91,7 +99,7 @@ public class Mpu9250 implements NineDOF{
      */
     @Override
     public double getGyro_x(){
-        return read16Bit(Registers.GYRO_XOUT_H.getAddress(), 1)[0] * scale.getGyro().getResolution();
+        return gyro[0];
     }
 
     /**
@@ -100,7 +108,7 @@ public class Mpu9250 implements NineDOF{
      */
     @Override
     public double getGyro_y(){
-        return read16Bit(Registers.GYRO_YOUT_H.getAddress(), 1)[0] * scale.getGyro().getResolution();
+        return gyro[1];
     }
 
     /**
@@ -109,7 +117,22 @@ public class Mpu9250 implements NineDOF{
      */
     @Override
     public double getGyro_z(){
-        return read16Bit(Registers.GYRO_ZOUT_H.getAddress(), 1)[0] * scale.getGyro().getResolution();
+        return gyro[2];
+    }
+
+    @Override
+    public void updateGyroscope() {
+        gyro = read16Bit(Registers.GYRO_XOUT_H.getAddress(), 3);
+    }
+
+    @Override
+    public void updateAccelerometer() {
+        accel = read16Bit(Registers.ACCEL_XOUT_H.getAddress(), 3);
+    }
+
+    @Override
+    public void updateMagnetometer() {
+
     }
 
     /**

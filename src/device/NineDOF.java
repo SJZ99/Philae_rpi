@@ -4,7 +4,10 @@ public interface NineDOF {
     public double getGyro_x();
     public double getGyro_y();
     public double getGyro_z();
-
+    public void updateGyroscope();
+    public void updateAccelerometer();
+    public void updateMagnetometer();
+    public int getGyroSampleRate();
     /**
      * Sleep specified length of time.
      * @param mills mills that will sleep

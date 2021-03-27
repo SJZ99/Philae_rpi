@@ -9,8 +9,8 @@ public class AHRS {
     private double yaw = 0, roll = 0, pitch = 0;
     public AHRS(NineDOF sensor){
         this.sensor = sensor;
-        Thread integral = new Thread(new IntegralThread());
-        integral.start();
+        Thread update = new Thread(new Update());
+        update.start();
     }
 
     /**
@@ -40,16 +40,19 @@ public class AHRS {
     /**
      * Run a thread to keep update integral value.
      */
-    private class IntegralThread implements Runnable{
+    private class Update implements Runnable{
         @Override
         public void run() {
+            sensor.updateAccelerometer();
+            sensor.updateGyroscope();
+            sensor.updateMagnetometer();
             double deltaT;
-            while(true) {
-                deltaT = timer.reset() * timer.getResolution();
+            while(!Thread.interrupted()) {
+                deltaT = timer.getPass() * timer.getResolution();
                 pitch += sensor.getGyro_x() * deltaT;
                 roll  += sensor.getGyro_y() * deltaT;
                 yaw   += sensor.getGyro_z() * deltaT;
-                sensor.sleep(125);
+                timer.spinLock(1000000000 / sensor.getGyroSampleRate());
             }
         }
     }
