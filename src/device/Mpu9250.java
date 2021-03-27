@@ -264,7 +264,7 @@ public class Mpu9250 implements NineDOF{
             e.printStackTrace();
         }
         short[] group = new short[groupCount];
-        for(int i = 0; i < groupCount; i++){
+        for(int i = 0; i < groupCount; ++i){
             group[i] =(short)(raw[i * 2] << 8 | raw[i * 2 + 1]);
         }
         return group;
