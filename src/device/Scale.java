@@ -106,7 +106,7 @@ public class Scale {
         }
         public double getResolution()
         {
-            return (double)minMax / 65536;
+            return (double)minMax * 2.0 / 65536.0;
         }
         public int getMinMax()
         {
