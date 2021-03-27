@@ -44,11 +44,11 @@ public class AHRS {
     private class Update implements Runnable{
         @Override
         public void run() {
-            sensor.updateAccelerometer();
-            sensor.updateGyroscope();
-            sensor.updateMagnetometer();
             double deltaT;
             while(!Thread.interrupted()) {
+                sensor.updateAccelerometer();
+                sensor.updateGyroscope();
+                sensor.updateMagnetometer();
                 deltaT = timer.getPass() * timer.getResolution();
                 pitch += sensor.getGyro_x() * deltaT;
                 roll  += sensor.getGyro_y() * deltaT;
