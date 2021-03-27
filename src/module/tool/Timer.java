@@ -1,13 +1,16 @@
 package module.tool;
 
 public class Timer {
-    long last = 0l;
+    long last = -1l;
 
     public void start(){
         last = System.nanoTime();
     }
 
     public long getPass(){
+        if(last < 0){
+            return 0;
+        }
         return System.nanoTime() - last;
     }
 
