@@ -158,18 +158,24 @@ public class Mpu9250 implements NineDOF{
         kI *= rate;
         //run PID
         for(int i = 0; i < iteration; ++i){
+            int totalError = 0;
             for(int j = 0; j < 100; ++j){
                 short[] err = read16Bit(startAddress, 3);
                 for(int k = 0; k < 3; ++k){
                     err[k] -= offset[k];
                     errorSum[k] += err[k];
                     offset[k] += (short) Math.round(err[k] * kP + errorSum[k] * kI);
+                    totalError += err[k];
+                }
+                if(totalError < 50 * Math.pow(0.85, i)){
+                    break;
                 }
                 if(j % 5 == 0){
                     for(int k = 0; k < 3; ++k){
                         errorSum[k] = 0;
                     }
                 }
+                totalError = 0;
             }
             kP *= 0.85;
             kI *= 0.85;
