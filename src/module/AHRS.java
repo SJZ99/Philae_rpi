@@ -9,10 +9,11 @@ public class AHRS {
     private double yaw = 0, roll = 0, pitch = 0;
     public AHRS(NineDOF sensor){
         this.sensor = sensor;
+    }
+    public void startUpdate(){
         Thread update = new Thread(new Update());
         update.start();
     }
-
     /**
      * Getter for gyro yaw value (position)
      * @return Angles of z axis
