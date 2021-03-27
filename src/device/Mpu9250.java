@@ -21,11 +21,11 @@ public class Mpu9250 implements NineDOF{
     /** scale */
     private Scale scale;
     /** Gyro data */
-    private short[] gyro = new short[3];
+    private int[] gyro = new int[3];
     /** Accel data */
-    private short[] accel = new short[3];
+    private int[] accel = new int[3];
     /** Mag data */
-    private short[] mag = new short[3];
+    private int[] mag = new int[3];
 
     public Mpu9250() {
         this(false);
@@ -161,7 +161,7 @@ public class Mpu9250 implements NineDOF{
         for(int i = 0; i < iteration; ++i){
             int totalError = 0;
             for(int j = 0; j < 100; ++j){
-                short[] err = read16Bit(startAddress, 3);
+                int[] err = read16Bit(startAddress, 3);
                 for(int k = 0; k < 3; ++k){
                     err[k] -= offset[k];
                     errorSum[k] += err[k];
@@ -256,16 +256,16 @@ public class Mpu9250 implements NineDOF{
      * @param groupCount  How many group you want to read.(group = how much bit / 16 bit)
      * @return            Short array that contain data.
      */
-    public short[] read16Bit(int address, int groupCount){
+    public int[] read16Bit(int address, int groupCount){
         byte[] raw = new byte[groupCount * 2]; //16 bit is two registers.
         try{
             mpu9250.read(address, raw, 0, groupCount * 2);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        short[] group = new short[groupCount];
+        int[] group = new int[groupCount];
         for(int i = 0; i < groupCount; ++i){
-            group[i] =(short)(raw[i * 2] << 8 | raw[i * 2 + 1]);
+            group[i] =(raw[i * 2] << 8 | raw[i * 2 + 1]);
         }
         return group;
     }
