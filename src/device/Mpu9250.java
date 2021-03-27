@@ -280,6 +280,10 @@ public class Mpu9250 implements NineDOF{
         return 8000;
     }
 
+    public double getGyroResolution(){
+        return scale.getGyro().getResolution();
+    }
+
 
 
     enum MagMode
