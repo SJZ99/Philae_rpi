@@ -165,11 +165,8 @@ public class Mpu9250 implements NineDOF{
                     err[k] -= offset[k];
                     errorSum[k] += err[k];
                     offset[k] += (short) Math.round(err[k] * kP + errorSum[k] * kI);
-                    totalError += err[k];
                 }
-                if(totalError < 50 * Math.pow(0.85, i)){
-                    break;
-                }
+
                 if(j % 5 == 0){
                     for(int k = 0; k < 3; ++k){
                         errorSum[k] = 0;
