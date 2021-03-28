@@ -14,6 +14,7 @@ public class Main {
     public static void main(String[] args) {
         Mpu9250 mpu9250 = new Mpu9250();
         while(true){
+            mpu9250.updateGyroscope();
             System.out.println("yaw: " + mpu9250.getGyro_z() * mpu9250.getGyroResolution());
         }
 //        AHRS ahrs = new AHRS(mpu9250);
