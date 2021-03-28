@@ -52,7 +52,7 @@ public class AHRS {
                 deltaT = timer.getPass() * timer.getResolution();
                 pitch += sensor.getGyro_x() * deltaT * sensor.getGyroResolution();
                 roll  += sensor.getGyro_y() * deltaT * sensor.getGyroResolution();
-                yaw   += sensor.getGyro_z() * deltaT * 131;
+                yaw   += sensor.getGyro_z() * deltaT * sensor.getGyroResolution();
                 System.out.printf("yaw= %f, roll= %f, pitch= %f\n", yaw, roll, pitch);
                 timer.spinLock(1000000000 / sensor.getGyroSampleRate());
             }
