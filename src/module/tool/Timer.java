@@ -1,7 +1,7 @@
 package module.tool;
 
 public class Timer {
-    long last = -1l;
+    long last = -1L;
 
     public void start(){
         last = System.nanoTime();
@@ -23,7 +23,6 @@ public class Timer {
     public void spinLock(long nano){
         start();
         while(getPass() < nano);
-        return;
     }
 
     public double getResolution(){
