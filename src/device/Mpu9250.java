@@ -58,7 +58,7 @@ public class Mpu9250 implements NineDOF{
      * Init Gyroscope and Accelerometer.
      */
     public void init(){
-        byte temp = read(Mpu9250.Registers.PWR_MGMT_1.getAddress());
+        short temp = read(Mpu9250.Registers.PWR_MGMT_1.getAddress());
 
         temp = (byte)(temp & 0x06);  //clear [6](sleep mode), set [1](auto select clock source)
         write(Mpu9250.Registers.PWR_MGMT_1.getAddress(), temp);
@@ -206,9 +206,9 @@ public class Mpu9250 implements NineDOF{
      * @param address Register address
      * @param data    Data(8 bit)
      */
-    public void write(int address, byte data){
+    public void write(int address, int data){
         try{
-            mpu9250.write(address, data);
+            mpu9250.write(address, (byte)data);
         }catch(IOException e){
             e.printStackTrace();
         }
@@ -240,10 +240,10 @@ public class Mpu9250 implements NineDOF{
      * @param  address Register address
      * @return Register data
      */
-    public byte read(int address) {
-        byte registerData = 0;
+    public short read(int address) {
+        short registerData = 0;
         try {
-            registerData = (byte) mpu9250.read(address);
+            registerData = (short)mpu9250.read(address);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -257,9 +257,11 @@ public class Mpu9250 implements NineDOF{
      * @return            Short array that contain data.
      */
     public int[] read16Bit(int address, int groupCount){
-        byte[] raw = new byte[groupCount * 2]; //16 bit is two registers.
+        int[] raw = new int[groupCount * 2]; //16 bit is two registers.
         try{
-            mpu9250.read(address, raw, 0, groupCount * 2);
+            for(int i = 0; i < groupCount * 2; ++i){
+                raw[i] = mpu9250.read(address + 1);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
