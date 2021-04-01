@@ -13,16 +13,16 @@ public class Main {
 
     public static void main(String[] args) {
         Mpu9250 mpu9250 = new Mpu9250();
-        System.out.println(Arrays.toString(mpu9250.read16Bit((byte)Mpu9250.Registers.SELF_TEST_X_GYRO.getAddress(), 3)));
+//        System.out.println(Arrays.toString(mpu9250.read16Bit((byte)Mpu9250.Registers.SELF_TEST_X_GYRO.getAddress(), 3)));
 
 //        while(true){
 //            mpu9250.updateGyroscope();
 //            System.out.println("yaw: " + mpu9250.getGyro_z() * mpu9250.getGyroResolution());
 //        }
-//        AHRS ahrs = new AHRS(mpu9250);
-//        mpu9250.sleep(200);
-//        System.out.println(Arrays.toString(mpu9250.read16Bit((byte)Mpu9250.Registers.GYRO_XOUT_H.getAddress(), 3)));
-//        ahrs.startUpdate();
+        AHRS ahrs = new AHRS(mpu9250);
+        mpu9250.sleep(200);
+        System.out.println(Arrays.toString(mpu9250.read16Bit((byte)Mpu9250.Registers.GYRO_XOUT_H.getAddress(), 3)));
+        ahrs.startUpdate();
 
     }
 }
