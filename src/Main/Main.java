@@ -22,7 +22,7 @@ public class Main {
         AHRS ahrs = new AHRS(mpu9250);
         mpu9250.sleep(200);
         System.out.println(Arrays.toString(mpu9250.read16Bit((byte)Mpu9250.Registers.GYRO_XOUT_H.getAddress(), 3)));
-        ahrs.startUpdate();
+//        ahrs.startUpdate();
 
     }
 }
