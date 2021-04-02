@@ -88,9 +88,9 @@ public class Mpu9250 implements NineDOF{
         write(Mpu9250.Registers.INT_ENABLE.getAddress(), (byte)0x01);  // Enable data ready (bit 0) interrupt
         sleep(100);
 
-        short[] offset = calibrate((byte) Mpu9250.Registers.GYRO_XOUT_H.getAddress(), 4);
-        System.out.println(Arrays.toString(offset));
-        writeOffset((byte) Mpu9250.Registers.XG_OFFSET_H.getAddress(), offset);
+//        short[] offset = calibrate((byte) Mpu9250.Registers.GYRO_XOUT_H.getAddress(), 4);
+//        System.out.println(Arrays.toString(offset));
+//        writeOffset((byte) Mpu9250.Registers.XG_OFFSET_H.getAddress(), offset);
 
     }
 
