@@ -88,7 +88,7 @@ public class Mpu9250 implements NineDOF{
         write(Mpu9250.Registers.INT_ENABLE.getAddress(), (byte)0x01);  // Enable data ready (bit 0) interrupt
         sleep(100);
 
-        short[] offset = calibrate((byte) Mpu9250.Registers.GYRO_XOUT_H.getAddress(), 4);
+        int[] offset = calibrate((byte) Mpu9250.Registers.GYRO_XOUT_H.getAddress(), 4);
         System.out.println(Arrays.toString(offset));
         writeOffset((byte) Mpu9250.Registers.XG_OFFSET_H.getAddress(), offset);
 
@@ -149,11 +149,11 @@ public class Mpu9250 implements NineDOF{
      * @param iteration    Times of Iteration (1~5)
      * @return bias of sensor
      */
-    public short[] calibrate(byte startAddress, int iteration){
+    public int[] calibrate(byte startAddress, int iteration){
         float kP = 0;
         float kI = 0;
         float rate = (float)((100 - (20 - (iteration / 5.0 * 20))) / 100);
-        short[] offset = new short[]{0, 0, 0};
+        int[] offset = new int[]{0, 0, 0};
         int[] errorSum = new int[]{0, 0, 0};
         if(startAddress == Mpu9250.Registers.GYRO_XOUT_H.getAddress()){
             kP = 0.6f;
@@ -192,7 +192,7 @@ public class Mpu9250 implements NineDOF{
      * @param address First register address
      * @param offset  Offset array, should contain three value(x, y, z)
      */
-    public void writeOffset(byte address, short[] offset){
+    public void writeOffset(byte address, int[] offset){
         byte[] buffer = new byte[6];
         if(address == Mpu9250.Registers.XG_OFFSET_H.getAddress()){
             //Divide 4 to match the registers of offset expect.
