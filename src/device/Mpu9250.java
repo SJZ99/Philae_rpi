@@ -68,7 +68,7 @@ public class Mpu9250 implements NineDOF{
         write(Mpu9250.Registers.PWR_MGMT_1.getAddress(), temp);
         sleep(200);
 
-        writeOffset((byte) Mpu9250.Registers.XG_OFFSET_H.getAddress(), new short[]{0, 0, 0});
+        writeOffset((byte) Mpu9250.Registers.XG_OFFSET_H.getAddress(), new int[]{0, 0, 0});
 
         write(Mpu9250.Registers.CONFIG.getAddress(), (byte)0x03); //Gyroscope 41kHz, Temperature 42kHz
 
