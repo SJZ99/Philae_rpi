@@ -256,10 +256,10 @@ public class Mpu9250 implements NineDOF{
      * @return            Short array that contain data.
      */
     public int[] read16Bit(int address, int groupCount){
-        int[] raw = new int[groupCount * 2]; //16 bit is two registers.
+        byte[] raw = new byte[groupCount * 2]; //16 bit is two registers.
         try{
             for(int i = 0; i < groupCount * 2; ++i){
-                raw[i] = mpu9250.read(address + i);
+                mpu9250.read(address, raw, 0, groupCount * 2);
             }
         } catch (IOException e) {
             e.printStackTrace();
