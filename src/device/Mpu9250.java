@@ -165,9 +165,9 @@ public class Mpu9250 implements NineDOF{
                     err[k] -= offset[k];
                     errorSum[k] += err[k];
                     offset[k] += (short) Math.round(err[k] * kP + errorSum[k] * kI);
-                    System.out.print(offset + ", ");
+//                    System.out.print(offset + ", ");
                 }
-                System.out.println();
+//                System.out.println();
                 if(j % 5 == 0){
                     for(int k = 0; k < 3; ++k){
                         errorSum[k] = 0;
