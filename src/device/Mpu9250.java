@@ -88,9 +88,9 @@ public class Mpu9250 implements NineDOF{
         write(Mpu9250.Registers.INT_ENABLE.getAddress(), (byte)0x01);  // Enable data ready (bit 0) interrupt
         sleep(100);
 
-        short[] offset = calibrate((byte) Mpu9250.Registers.GYRO_XOUT_H.getAddress(), 4);
+//        short[] offset = calibrate((byte) Mpu9250.Registers.GYRO_XOUT_H.getAddress(), 4);
 //        System.out.println(Arrays.toString(offset));
-        writeOffset((byte) Mpu9250.Registers.XG_OFFSET_H.getAddress(), offset);
+//        writeOffset((byte) Mpu9250.Registers.XG_OFFSET_H.getAddress(), offset);
 
     }
 
@@ -258,9 +258,8 @@ public class Mpu9250 implements NineDOF{
     public int[] read16Bit(int address, int groupCount){
         byte[] raw = new byte[groupCount * 2]; //16 bit is two registers.
         try{
-            for(int i = 0; i < groupCount * 2; ++i){
-                mpu9250.read(address, raw, 0, groupCount * 2);
-            }
+            mpu9250.read(address, raw, 0, groupCount * 2);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
