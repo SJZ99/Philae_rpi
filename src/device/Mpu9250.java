@@ -259,7 +259,7 @@ public class Mpu9250 implements NineDOF{
         int[] raw = new int[groupCount * 2]; //16 bit is two registers.
         try{
             for(int i = 0; i < groupCount * 2; ++i){
-                raw[i] = mpu9250.read(address + 1);
+                raw[i] = mpu9250.read(address + i);
             }
         } catch (IOException e) {
             e.printStackTrace();
