@@ -15,7 +15,8 @@ public class AHRS {
         update.start();
     }
     /**
-     * Getter for gyro yaw value (position)
+     * Getter for gyro yaw value (positi
+     * on)
      * @return Angles of z axis
      */
     public double getRawYaw(){
