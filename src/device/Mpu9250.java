@@ -32,7 +32,7 @@ public class Mpu9250 implements NineDOF{
     }
 
     public Mpu9250(boolean isAD0High) {
-        this(new Scale(Scale.AccScale.AFS_4G, GyroScale.GFS_500DPS, Scale.MagScale.MFS_16BIT),
+        this(new Scale(Scale.AccScale.AFS_4G, GyroScale.GFS_250DPS, Scale.MagScale.MFS_16BIT),
                 isAD0High);
     }
 
