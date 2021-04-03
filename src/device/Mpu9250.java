@@ -273,6 +273,9 @@ public class Mpu9250 implements NineDOF{
         int[] group = new int[groupCount];
         for(int i = 0; i < groupCount; ++i){
             group[i] =(Byte.toUnsignedInt(raw[i * 2]) << 8 | Byte.toUnsignedInt(raw[i * 2 + 1]));
+            if(group[i] >= 32768){
+                group[i] -= 65536;
+            }
         }
         return group;
     }
