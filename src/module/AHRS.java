@@ -47,10 +47,10 @@ public class AHRS {
         public void run() {
             double deltaT;
             while(!Thread.interrupted()) {
+                deltaT = timer.getPass() * timer.getResolution();
                 sensor.updateAccelerometer();
                 sensor.updateGyroscope();
                 sensor.updateMagnetometer();
-                deltaT = timer.getPass() * timer.getResolution();
                 pitch += sensor.getGyro_x() * deltaT * sensor.getGyroResolution();
                 roll  += sensor.getGyro_y() * deltaT * sensor.getGyroResolution();
                 yaw   += sensor.getGyro_z() * deltaT * sensor.getGyroResolution();
