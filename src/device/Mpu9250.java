@@ -51,7 +51,7 @@ public class Mpu9250 implements NineDOF{
         }
 
         this.scale = scale;
-//        init();
+        init();
     }
 
     /**
