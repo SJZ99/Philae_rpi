@@ -51,7 +51,7 @@ public class Mpu9250 implements NineDOF{
         }
 
         this.scale = scale;
-        init();
+//        init();
     }
 
     /**
@@ -196,11 +196,11 @@ public class Mpu9250 implements NineDOF{
         byte[] buffer = new byte[6];
         if(address == Mpu9250.Registers.XG_OFFSET_H.getAddress()){
             //Divide 4 to match the registers of offset expect.
-            buffer[0] = (byte)((-offset[0] / 4 >> 8) & 0xFF);
+            buffer[0] = (byte)(((-offset[0] / 4) >> 8) & 0xFF);
             buffer[1] = (byte)((-offset[0] / 4) & 0xFF);
-            buffer[2] = (byte)((-offset[1] / 4 >> 8) & 0xFF);
+            buffer[2] = (byte)(((-offset[1] / 4) >> 8) & 0xFF);
             buffer[3] = (byte)((-offset[1] / 4) & 0xFF);
-            buffer[4] = (byte)((-offset[2] / 4 >> 8) & 0xFF);
+            buffer[4] = (byte)(((-offset[2] / 4) >> 8) & 0xFF);
             buffer[5] = (byte)((-offset[2] / 4) & 0xFF);
 
             write(Mpu9250.Registers.XG_OFFSET_H.getAddress(), 6, buffer);
