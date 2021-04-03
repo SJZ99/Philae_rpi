@@ -7,6 +7,7 @@ public class AHRS {
     NineDOF sensor;
     Timer timer = new Timer();
     private double yaw = 0, roll = 0, pitch = 0;
+    private double x, y, z, norm;
     public AHRS(NineDOF sensor){
         this.sensor = sensor;
     }
@@ -51,11 +52,19 @@ public class AHRS {
                 sensor.updateAccelerometer();
                 sensor.updateGyroscope();
                 sensor.updateMagnetometer();
+
+                x = sensor.getAccelData()[0] * sensor.getAccelResolution();
+                y = sensor.getAccelData()[1] * sensor.getAccelResolution();
+                z = sensor.getAccelData()[2] * sensor.getAccelResolution();
+                norm = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2));
+                System.out.printf("x= %f, y= %f, z= %f, norm= %f", x, y, z, norm);
+                /*
                 pitch += sensor.getGyro_x() * deltaT * sensor.getGyroResolution();
                 roll  += sensor.getGyro_y() * deltaT * sensor.getGyroResolution();
                 yaw   += sensor.getGyro_z() * deltaT * sensor.getGyroResolution();
                 System.out.printf("yaw= %f, roll= %f, pitch= %f\n", yaw, roll, pitch);
                 timer.spinLock(1000000000 / sensor.getGyroSampleRate()/8);
+                 */
             }
         }
     }

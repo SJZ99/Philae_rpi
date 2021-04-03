@@ -105,7 +105,6 @@ public class Mpu9250 implements NineDOF{
      * Getter for gyro x value (velocity)
      * @return Angular velocity of x axis
      */
-    @Override
     public double getGyro_x(){
         return gyro[0];
     }
@@ -114,7 +113,6 @@ public class Mpu9250 implements NineDOF{
      * Getter for gyro y value (velocity)
      * @return Angular velocity of y axis
      */
-    @Override
     public double getGyro_y(){
         return gyro[1];
     }
@@ -123,7 +121,6 @@ public class Mpu9250 implements NineDOF{
      * Getter for gyro z value (velocity)
      * @return Angular velocity of z axis
      */
-    @Override
     public double getGyro_z(){
         return gyro[2];
     }
@@ -291,7 +288,9 @@ public class Mpu9250 implements NineDOF{
     public double getGyroResolution(){
         return scale.getGyro().getResolution();
     }
-
+    public double getAccelResolution(){
+        return scale.getAcc().getResolution();
+    }
 
 
     enum MagMode

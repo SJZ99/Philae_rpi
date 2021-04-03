@@ -1,9 +1,8 @@
 package device;
 
 public interface NineDOF {
-    public double getGyro_x();
-    public double getGyro_y();
-    public double getGyro_z();
+    public int[] getGyroData();
+    public int[] getAccelData();
 
     public void updateGyroscope();
     public void updateAccelerometer();
@@ -12,6 +11,7 @@ public interface NineDOF {
     public int getGyroSampleRate();
 
     public double getGyroResolution();
+    public double getAccelResolution();
     /**
      * Sleep specified length of time.
      * @param mills mills that will sleep
