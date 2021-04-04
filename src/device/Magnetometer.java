@@ -58,6 +58,7 @@ public class Magnetometer {
     public void update(){
         byte newMagData = (byte) (read(Mpu9250.Registers.AK8963_ST1.getAddress()) & 0x01);
         if (newMagData == 0) return;
+        System.out.println("data update");
         short[] buffer = read(Mpu9250.Registers.AK8963_ST1.getAddress(), 7);
 
         short c = buffer[6];
