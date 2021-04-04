@@ -62,7 +62,7 @@ public class Magnetometer {
         short[] buffer = read(Mpu9250.Registers.AK8963_ST1.getAddress(), 7);
 
         short c = buffer[6];
-        if((c & 0x08) == 1)
+        if((c & 0x08) == 0)
         { // Check if magnetic sensor overflow set, if not then report data
             lastRawMagX = (short) ((buffer[1] << 8) | buffer[0]); // Turn the MSB and LSB into a signed 16-bit value
             lastRawMagY = (short) ((buffer[3] << 8) | buffer[2]); // Data stored as little Endian
