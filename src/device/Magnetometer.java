@@ -26,24 +26,31 @@ public class Magnetometer {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        init();
     }
-
-    public void init() throws InterruptedException {
+    public void sleep(long mills){
+        try{
+            Thread.sleep(mills);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+    public void init() {
         write(Mpu9250.Registers.AK8963_CNTL.getAddress(),(byte) 0x00); // Power down magnetometer
-        Thread.sleep(10);
+        sleep(10);
         write(Mpu9250.Registers.AK8963_CNTL.getAddress(), (byte)0x0F); // Enter Fuse ROM access mode
-        Thread.sleep(10);
+        sleep(10);
         short rawData[] = read(Mpu9250.Registers.AK8963_ASAX.getAddress(), 3);  // Read the x-, y-, and z-axis calibration values
         scale.getMag().getScaling()[0] =  (float)(rawData[0] - 128)/256f + 1f;   // Return x-axis sensitivity adjustment values, etc.
         scale.getMag().getScaling()[1] =  (float)(rawData[1] - 128)/256f + 1f;
         scale.getMag().getScaling()[2] =  (float)(rawData[2] - 128)/256f + 1f;
         write(Mpu9250.Registers.AK8963_CNTL.getAddress(), (byte)0x00); // Power down magnetometer
-        Thread.sleep(10);
+        sleep(10);
         // Configure the magnetometer for continuous read and highest resolution
         // set Mscale bit 4 to 1 (0) to enable 16 (14) bit resolution in CNTL register,
         // and enable continuous mode data acquisition Mmode (bits [3:0]), 0010 for 8 Hz and 0110 for 100 Hz sample rates
         write(Mpu9250.Registers.AK8963_CNTL.getAddress(), (byte)(scale.getMag().MFS_16BIT.getValue() << 4 | magMode.getMode())); // Set magnetometer data resolution and sample ODR
-        Thread.sleep(10);
+        sleep(10);
     }
 
     public void update(){
