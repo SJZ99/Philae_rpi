@@ -9,7 +9,7 @@ import java.util.Objects;
 
 public class Magnetometer {
     I2CDevice magnetometer;
-    double mag[];
+    double mag[] = new double[3];
     float lastRawMagX, lastRawMagY, lastRawMagZ;
     Scale scale;
     MagMode magMode;
