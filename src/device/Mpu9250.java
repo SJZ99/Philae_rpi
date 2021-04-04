@@ -140,6 +140,10 @@ public class Mpu9250 implements NineDOF{
 
     }
 
+    public Scale getScale(){
+        return scale;
+    }
+
     /**
      * Get bias of sensor (3 DOF)
      * @param startAddress Sensor data address
