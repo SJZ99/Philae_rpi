@@ -67,6 +67,7 @@ public class Magnetometer {
             lastRawMagY = (short) ((buffer[3] << 8) | buffer[2]); // Data stored as little Endian
             lastRawMagZ = (short) ((buffer[5] << 8) | buffer[4]);
             float x=lastRawMagX,y=lastRawMagY,z=lastRawMagZ;
+            System.out.println(lastRawMagX + " " + lastRawMagY + " " +  lastRawMagZ);
 
             x *= scale.getMag().getResolution()* scale.getMag().getScaling()[0];
             y *= scale.getMag().getResolution()* scale.getMag().getScaling()[1];
