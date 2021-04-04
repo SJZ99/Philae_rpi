@@ -18,6 +18,7 @@ public class Main {
 
 //        System.out.println(Arrays.toString(mpu9250.read16Bit((byte)Mpu9250.Registers.SELF_TEST_X_GYRO.getAddress(), 3)));
 
+
         while(true){
 //            mpu9250.updateGyroscope();
 //            System.out.println(mpu9250.getGyro_z());

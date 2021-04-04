@@ -5,6 +5,7 @@ import com.pi4j.io.i2c.I2CDevice;
 import com.pi4j.io.i2c.I2CFactory;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Objects;
 
 public class Magnetometer {
@@ -51,6 +52,7 @@ public class Magnetometer {
         // and enable continuous mode data acquisition Mmode (bits [3:0]), 0010 for 8 Hz and 0110 for 100 Hz sample rates
         write(Mpu9250.Registers.AK8963_CNTL.getAddress(), (byte)(scale.getMag().MFS_16BIT.getValue() << 4 | magMode.getMode())); // Set magnetometer data resolution and sample ODR
         sleep(10);
+        System.out.println(Arrays.toString(scale.getMag().getScaling()));
     }
 
     public void update(){
